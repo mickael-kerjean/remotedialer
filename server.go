@@ -4,10 +4,9 @@ import (
 	"net/http"
 	"sync"
 	"time"
-
+	. "github.com/mickael-kerjean/filestash/server/common"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -53,7 +52,7 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	logrus.Infof("Handling backend connection request [%s]", clientKey)
+	Log.Stdout("[tunnel] connect_request <%s>", clientKey)
 
 	upgrader := websocket.Upgrader{
 		HandshakeTimeout: 5 * time.Second,
@@ -74,7 +73,7 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	code, err := session.Serve()
 	if err != nil {
 		// Hijacked so we can't write to the client
-		logrus.Infof("error in remotedialer server [%d]: %v", code, err)
+		Log.Stdout("[tunnel] dialer_error <%d> %s", code, err.Error())
 	}
 }
 
